@@ -1,0 +1,1 @@
+export function Unavailable(){return <main className="empty-state"><h1>The workshop is temporarily unavailable.</h1><p>Please refresh in a moment.</p><a className="btn primary" href="/">Try again</a></main>;}
