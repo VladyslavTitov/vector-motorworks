@@ -1,4 +1,3 @@
-import { env } from 'cloudflare:workers';
 import { headers } from 'next/headers';
 import { database } from './storage';
 
@@ -13,7 +12,7 @@ export function sameOrigin(request: Request) {
   return (!origin || origin === new URL(request.url).origin) && request.headers.get('sec-fetch-site') !== 'cross-site';
 }
 export async function verifyPassword(username: string, password: string) {
-  const settings = env as unknown as {DASHBOARD_USERNAME?: string; DASHBOARD_PASSWORD_HASH?: string};
+  const settings = process.env;
   const encoded = settings.DASHBOARD_PASSWORD_HASH;
   if (!settings.DASHBOARD_USERNAME || !encoded || !/^[a-f0-9]{32}:[a-f0-9]{64}$/.test(encoded)) throw new Error('Dashboard authentication is not configured');
   const [salt, expected] = encoded.split(':');

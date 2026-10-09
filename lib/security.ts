@@ -1,4 +1,3 @@
-import { getChatGPTUser } from '@/app/chatgpt-auth';
 import { hasAdminSession, sameOrigin } from './admin-auth';
 export async function authorize(request:Request) {
   if(!sameOrigin(request))return Response.json({error:'This request could not be verified.'},{status:403});
@@ -7,7 +6,6 @@ export async function authorize(request:Request) {
 }
 export async function authorizeVisitor(request:Request) {
   if(!sameOrigin(request))return Response.json({error:'This request could not be verified.'},{status:403});
-  if(!await getChatGPTUser())return Response.json({error:'Sign in to send a request on this private test website.'},{status:401});
   return null;
 }
 export function failure(e:unknown) { console.error('Workshop request failed',e); return Response.json({error:'We could not complete this request. Please try again.'},{status:503}); }
