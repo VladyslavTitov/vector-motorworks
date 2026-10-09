@@ -24,7 +24,7 @@ export async function verifyPassword(username: string, password: string) {
   return mismatch === 0 && username === settings.DASHBOARD_USERNAME;
 }
 export async function allowAttempt(request: Request, kind='login', limit=5) {
-  const key = await digest(kind+':'+(request.headers.get('cf-connecting-ip') || request.headers.get('x-real-ip') || 'unknown'));
+  const key = await digest(kind+':'+(request.headers.get('x-vercel-forwarded-for') || request.headers.get('x-forwarded-for') || 'unknown'));
   const now = Date.now();
   const row = await database().prepare('INSERT INTO login_limits (key, attempts, window_start) VALUES (?, 1, ?) ON CONFLICT(key) DO UPDATE SET attempts = CASE WHEN login_limits.window_start < ? THEN 1 ELSE login_limits.attempts + 1 END, window_start = CASE WHEN login_limits.window_start < ? THEN excluded.window_start ELSE login_limits.window_start END RETURNING attempts').bind(key, now, now-900000, now-900000).first<{attempts:number}>();
   return (row?.attempts ?? limit+1) <= limit;
